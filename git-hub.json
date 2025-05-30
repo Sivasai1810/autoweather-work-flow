@@ -1,0 +1,88 @@
+{
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/Sivasai1810",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "https://github.com/Sivasai1810/demo-repository",
+          "mode": "url"
+        },
+        "events": [
+          "*"
+        ],
+        "options": {
+          "insecureSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -80
+      ],
+      "id": "106b554b-b64e-4d04-91b9-5d6105b0302d",
+      "name": "Github Trigger",
+      "webhookId": "aca9fdc3-21c1-46c1-b746-93e70f6de45d",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "I7X0wbGrcQQJkaGW",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1422652417",
+        "text": "=new issue rised on sivasailocalrepo {{ $json.body.repository.owner.name }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -60
+      ],
+      "id": "d8cb3293-a86f-4a93-a850-a52a39adb01c",
+      "name": "Telegram",
+      "webhookId": "4fb38fe9-99c6-454c-b14e-8725bc324cf8",
+      "credentials": {
+        "telegramApi": {
+          "id": "UOqM6sAVm4JR7pF4",
+          "name": "git-hub automation"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Trigger": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "28591e06-d8c3-4cf5-87cf-07b52ffb0439",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5019f379dedd2e7708cd16d94abaa81a118495545994c535c440ae074307d2dd"
+  },
+  "id": "4h70qytvwR6JLuH1",
+  "tags": []
+}
