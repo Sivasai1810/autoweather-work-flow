@@ -1,0 +1,135 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b0fbbf1a-a553-40fb-99ef-02a0c9d15d10",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "url": "http://api.weatherapi.com/v1/current.json?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "3952ee922fbd4366a7a62835252405"
+            },
+            {
+              "name": "q",
+              "value": "cumbum"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "c26bbe5f-e4a1-4e26-9c82-9a5689df0324",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "nsivasai88@gmail.com",
+        "subject": "current weather update",
+        "emailType": "text",
+        "message": "={{ $json.location.name }} {{ $json.location.region }} {{ $json.location.country }} longtitute {{ $json.location.lat }} \n current temperature{{ $json.current.temp_c }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "61f9aef9-cce9-45b7-8fd8-0e13342fbfcb",
+      "name": "Gmail",
+      "webhookId": "5c260f83-ae1f-42ed-8c68-d8b657a0afe3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GY4sACnUozU9bwVN",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -160
+      ],
+      "id": "dacef1f3-14d7-48e7-9845-65142975b112",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5bc389d2-d303-4a57-9975-8eebca1e9ccc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5019f379dedd2e7708cd16d94abaa81a118495545994c535c440ae074307d2dd"
+  },
+  "id": "bCBypEFovQ0Dn7mG",
+  "tags": []
+}
