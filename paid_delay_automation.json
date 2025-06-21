@@ -1,0 +1,578 @@
+{
+  "name": "paid delay automation",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kvi1Pmq3_FkjyygaSFscq9_UaTQfr_017hTmTnIqyqQ",
+          "mode": "list",
+          "cachedResultName": "invoice automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kvi1Pmq3_FkjyygaSFscq9_UaTQfr_017hTmTnIqyqQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kvi1Pmq3_FkjyygaSFscq9_UaTQfr_017hTmTnIqyqQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -240,
+        -40
+      ],
+      "id": "4e8b2268-602d-40d2-9033-ec31065fb42c",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CsQAdE50ItYY2KNa",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1QaowVYVKlNQbWOLzkJJP3QbgohPQRTkylmAScdHMd44",
+          "mode": "list",
+          "cachedResultName": "paid",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QaowVYVKlNQbWOLzkJJP3QbgohPQRTkylmAScdHMd44/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QaowVYVKlNQbWOLzkJJP3QbgohPQRTkylmAScdHMd44/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "PAID": "={{ $json['[\\' Status\\']'] }}",
+            "INVOICEID": "={{ $('Google Sheets').item.json.INVOICEID }}"
+          },
+          "matchingColumns": [
+            "INVOICEID"
+          ],
+          "schema": [
+            {
+              "id": "INVOICEID",
+              "displayName": "INVOICEID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PAID",
+              "displayName": "PAID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -20,
+        -280
+      ],
+      "id": "42f4526f-66d9-4f64-b528-993282d03a58",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CsQAdE50ItYY2KNa",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['[\\'Due-Date\\']'] }}\n",
+                    "rightValue": "=\n{{ $json['[\\'Due-Date\\']'] }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "68580348-34b3-488a-9427-1a3a8507ef4f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "onday"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ef140689-8cf1-4e61-8e1c-bf51b3c1a006",
+                    "leftValue": "={{$now.format('yyyy/MM/dd') }}",
+                    "rightValue": "={{    (() => {     const input = $json[\"['Due-Date']\"];     const [dd, mm, yyyy] = input.split(\"/\");     const date = new Date(`${yyyy}-${mm}-${dd}`);     date.setDate(date.getDate() + 1);     const newDD = String(date.getDate()).padStart(2, '0');     const newMM = String(date.getMonth() + 1).padStart(2, '0');     const newYYYY = date.getFullYear();     return `${newYYYY}/${newMM}/${newDD }`;   })() }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "onedaydelay"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3e9e7e1e-f125-4c1f-8586-dcb1768286c5",
+                    "leftValue": "={{$now.format('yyyy/MM/dd') }}",
+                    "rightValue": "={{    (() => {     const input = $json[\"['Due-Date']\"];     const [dd, mm, yyyy] = input.split(\"/\");     const date = new Date(`${yyyy}-${mm}-${dd}`);     date.setDate(date.getDate() + 2);     const newDD = String(date.getDate()).padStart(2, '0');     const newMM = String(date.getMonth() + 1).padStart(2, '0');     const newYYYY = date.getFullYear();     return `${newYYYY}/${newMM}/${newDD}`;   })() }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": "={{ true }}",
+              "outputKey": "twodaydelay"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fc9b0a84-0e7a-44ee-9cd0-1490b6be408c",
+                    "leftValue": "={{$now.format('yyyy/MM/dd') }}",
+                    "rightValue": "={{    (() => {     const input = $json[\"['Due-Date']\"];     const [dd, mm, yyyy] = input.split(\"/\");     const date = new Date(`${yyyy}-${mm}-${dd}`);     date.setDate(date.getDate() + 3);     const newDD = String(date.getDate()).padStart(2, '0');     const newMM = String(date.getMonth() + 1).padStart(2, '0');     const newYYYY = date.getFullYear();     return `${newYYYY }/${newMM}/${newDD }`;   })() }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "threedaysdelay"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d90f5617-a3ac-4a6d-b9be-2c7ba08e3f8e",
+                    "leftValue": "={{ $now.format('yyyy/MM/dd') }}",
+                    "rightValue": "={{    (() => {     const input = $json[\"['Due-Date']\"];     const [dd, mm, yyyy] = input.split(\"/\");     const date = new Date(`${yyyy}-${mm}-${dd}`);     date.setDate(date.getDate() + 4);     const newDD = String(date.getDate()).padStart(2, '0');     const newMM = String(date.getMonth() + 1).padStart(2, '0');     const newYYYY = date.getFullYear();     return `${newYYYY}/${newMM}/${newDD}`;   })() }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fourdaysdelay"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7c57394d-b394-4d9c-a58c-6867db208b3a",
+                    "leftValue": "={{ $now.format('yyyy/MM/dd') }}",
+                    "rightValue": "={{    (() => {     const input = $json[\"['Due-Date']\"];     const [dd, mm, yyyy] = input.split(\"/\");     const date = new Date(`${yyyy}-${mm}-${dd}`);     date.setDate(date.getDate() + 5);     const newDD = String(date.getDate()).padStart(2, '0');     const newMM = String(date.getMonth() + 1).padStart(2, '0');     const newYYYY = date.getFullYear();     return `${newYYYY}/${newMM}/${newDD }`;   })() }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fivedaysdelay"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        460,
+        -80
+      ],
+      "id": "935f2b1a-ac43-44dd-9c01-20d12dc1a071",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ad9671ca-12a7-48dc-aa9e-f412abdc2bc7",
+              "leftValue": "={{ $json['[\\' Status\\']'] }}",
+              "rightValue": "paid",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        -40
+      ],
+      "id": "d299842c-7b17-47c3-8a10-7de300ea1044",
+      "name": "checks paid or not"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "[' Status'], ['Due-Date']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -40
+      ],
+      "id": "418510a7-4878-4bac-9937-6db61379463e",
+      "name": "Splits due-date& status"
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already your last day ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        -240
+      ],
+      "id": "8f52e0ff-f83d-411c-9ce0-a876a6b2438d",
+      "name": "Gmail1",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already its oneday delay",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        -380
+      ],
+      "id": "46023b89-dcdc-4bbc-b1ac-e1babc54cac2",
+      "name": "Gmail",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already your last day ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        -540
+      ],
+      "id": "acf869ff-24ef-4850-b039-6082ef9abb3b",
+      "name": "Gmail2",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already your last day ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        -700
+      ],
+      "id": "0a75bd56-ff13-452a-bdd1-0d8a9130d8d8",
+      "name": "Gmail3",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already your last day ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        -160
+      ],
+      "id": "032502f7-4fa1-45bb-b87b-0610905ce7b4",
+      "name": "Gmail4",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "asai36719@gmail.com",
+        "subject": "delay payment ",
+        "emailType": "text",
+        "message": "please pay your bills its already your last day ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        780,
+        0
+      ],
+      "id": "ee6a0908-45d0-40f6-9442-2fe664571ac8",
+      "name": "Gmail5",
+      "webhookId": "5175cfee-08cb-44f0-a31c-ed38e67d2076",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "a1Due7MrOewiUt2O",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -100
+      ],
+      "id": "04d3d39a-28ac-4e86-9ef3-fbcbd5937284",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Splits due-date& status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checks paid or not": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splits due-date& status": {
+      "main": [
+        [
+          {
+            "node": "checks paid or not",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bc8c0e0c-54f6-47c1-bed0-c99580bb66c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7fd069c85345e92076c47f0f92a688869ff01a81c7cafd1623dbebf7ef6c0a8e"
+  },
+  "id": "2CFfAZNTpygsKdj8",
+  "tags": []
+}
